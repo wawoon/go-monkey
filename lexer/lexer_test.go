@@ -85,8 +85,6 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
-	// 	!-/*5;
-	// 5 < 10 > 5;
 
 	l := New(input)
 
