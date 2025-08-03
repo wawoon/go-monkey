@@ -1,0 +1,2 @@
+./lexer.go
+./lexer_test.go

@@ -114,8 +114,14 @@ func (l *Lexer) skipWhiteSpace() {
 	}
 }
 
+// isLetter reports whether the given byte is an ASCII letter (a–z, A–Z) or an underscore.
+//
+// The original implementation unintentionally checked only up to 'X' for
+// uppercase characters, which caused identifiers containing 'Y' or 'Z' to be
+// treated as ILLEGAL tokens.  Extending the range to 'Z' fixes the bug while
+// keeping the logic simple and fast.
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'X' || ch == '_'
+    return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
 func (l *Lexer) readNumber() string {
