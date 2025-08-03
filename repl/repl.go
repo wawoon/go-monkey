@@ -9,23 +9,31 @@ import (
 	"github.com/wawoon/go-monkey/token"
 )
 
-const PROMPT = ">>"
+const PROMPT = ">> "
 
+// Start launches a read–eval–print loop.
+//
+// All input is read from the given io.Reader and any output – the prompt and
+// the inspected tokens – is written to the supplied io.Writer.  Separating the
+// writer from os.Stdout makes the REPL easier to test and to embed in other
+// programs.
 func Start(in io.Reader, out io.Writer) {
-	scanner := bufio.NewScanner(in)
+    scanner := bufio.NewScanner(in)
 
-	for {
-		fmt.Printf(PROMPT)
-		scanned := scanner.Scan()
-		if !scanned {
-			return
-		}
+    for {
+        fmt.Fprint(out, PROMPT)
 
-		line := scanner.Text()
-		l := lexer.New(line)
+        if !scanner.Scan() {
+            // io.EOF or other error -> quit silently; callers can check
+            // scanner.Err() if they need the exact reason.
+            return
+        }
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
-		}
-	}
+        line := scanner.Text()
+        l := lexer.New(line)
+
+        for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
+            fmt.Fprintf(out, "%+v\n", tok)
+        }
+    }
 }
